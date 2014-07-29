@@ -1,0 +1,16 @@
+*.py[co]
+*.mo
+*.log
+*.pid
+*.sock
+*.geany
+*.project
+*.anjuta
+*.sublime*
+*.directory
+env
+run
+db.sqlite3
+local_settings.py*
+settings_local.py*
+/webroot/
