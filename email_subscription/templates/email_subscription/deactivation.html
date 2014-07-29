@@ -1,0 +1,11 @@
+{% extends "email_subscription/subscription_base.html" %}
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}{% trans "Subscription deactivation" %}{% endblock %}
+
+{% block content %}
+<p>{% trans "Your email subscription is now deactivated" %}</p>
+<p>{% trans "If you wish to subsribe back again - check your emails." %}</p>
+<a href="/">{% trans "Go to starting page" %}</a>
+{% endblock %}

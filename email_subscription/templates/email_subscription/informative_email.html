@@ -1,0 +1,14 @@
+{% load i18n %}
+{% load url from future %}
+
+
+{% block content %}
+{% endblock %}
+
+{% block footer %}
+{% trans "If you wish to unsubscribe from these emails click the following link:" %}
+{{ subscriber.deactivation_url }}
+{% endblock %}
+
+{% trans "Sincerely," %}
+{{ site.name }}

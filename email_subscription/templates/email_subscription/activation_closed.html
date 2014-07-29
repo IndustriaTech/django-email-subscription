@@ -1,0 +1,11 @@
+{% extends "email_subscription/subscription_base.html" %}
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}{% trans "Subscription closed" %}{% endblock %}
+
+{% block content %}
+<p>{% trans "We are sorry but your subscription activation is closed." %}</p>
+<p>{% trans "Maybe you are coming late?" %}</p>
+<p>{% trans "You can try to subscribe your email again." %}</p>
+{% endblock %}

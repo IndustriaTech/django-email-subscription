@@ -1,0 +1,11 @@
+{% extends "email_subscription/subscription_base.html" %}
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}{% trans "Subscription email sent" %}{% endblock %}
+
+{% block content %}
+<p>{% trans "Good, you are doing well!" %}</p>
+<p>{% trans "You can check now your email for further instructions." %}</p>
+<a href="/">{% trans "Go to starting page" %}</a>
+{% endblock %}

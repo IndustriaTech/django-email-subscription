@@ -1,0 +1,16 @@
+{% extends "email_subscription/subscription_base.html" %}
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}{% trans "Subscription your email." %}{% endblock %}
+
+{% block content %}
+<p>{% trans "If you are willing to receive emails connected with this site please subscribe" %}</p>
+
+<form method="post" action=".">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="{% trans "Register" %}">
+</form>
+
+{% endblock %}
