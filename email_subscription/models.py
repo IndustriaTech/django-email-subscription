@@ -11,8 +11,19 @@ from django.core.urlresolvers import reverse
 from email_subscription import settings
 
 
-class ActivationTimeExpired(Exception):
+class ActivationKeyExpired(Exception):
     pass
+
+
+class EmailSubscribersManager(models.Manager):
+    def active(self, *args, **kwargs):
+        return self.get_queryset().filter(is_activated=True, *args, **kwargs)
+
+    def get_nonexpired(self, *args, **kwargs):
+        subscriber = self.get(*args, **kwargs)
+        if subscriber.activation_key_expired():
+            raise ActivationKeyExpired
+        return subscriber
 
 
 class EmailSubscriber(models.Model):
@@ -21,13 +32,12 @@ class EmailSubscriber(models.Model):
     is_activated = models.BooleanField(_('subscriber activated'), default=False)
     activation_request_sent_at = models.DateTimeField(_('date joined'), default=timezone.now)
 
-    ActivationTimeExpired = ActivationTimeExpired
+    objects = EmailSubscribersManager()
 
     def activation_key_expired(self):
         expiration_date = self.activation_request_sent_at + datetime.timedelta(
             days=settings.SUBSCRIBE_ACTIVATION_DAYS)
         return self.is_activated or expiration_date <= timezone.now()
-    activation_key_expired.boolean = True
 
     def deactivation_url(self):
         return 'http://{site_domain}{link}'.format(

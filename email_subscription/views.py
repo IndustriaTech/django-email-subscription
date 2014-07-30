@@ -4,7 +4,7 @@ from django.views.generic import TemplateView, FormView, RedirectView
 from django.http import Http404
 
 from email_subscription.forms import EmailSubscriberForm
-from email_subscription.models import EmailSubscriber
+from email_subscription.models import EmailSubscriber, ActivationKeyExpired
 
 
 class RegistrationView(FormView):
@@ -24,19 +24,16 @@ class ActivationView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         try:
-            to_activate = EmailSubscriber.objects.get(
-                activation_key__iexact=kwargs['activation_key'], is_activated=False)
-            if to_activate.activation_key_expired():
-                raise EmailSubscriber.ActivationTimeExpired
-        except (KeyError, EmailSubscriber.DoesNotExist):
+            to_activate = EmailSubscriber.objects.get_nonexpired(
+                activation_key__exact=kwargs['activation_key'], is_activated=False)
+        except EmailSubscriber.DoesNotExist:
             raise Http404
-        except EmailSubscriber.ActivationTimeExpired:
-            self.url = reverse_lazy('subscriptions:activation_closed')
-            return super(ActivationView, self).get_redirect_url(*args, **kwargs)
+        except ActivationKeyExpired:
+            return reverse_lazy('subscriptions:activation_closed')
         else:
             to_activate.is_activated = True
             to_activate.save()
-            return super(ActivationView, self).get_redirect_url(*args, **kwargs)
+            return self.url
 
 
 class DeactivationView(RedirectView):
@@ -45,14 +42,14 @@ class DeactivationView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         try:
-            to_deactivate = EmailSubscriber.objects.get(
-                activation_key__iexact=kwargs['activation_key'], is_activated=True)
-        except (KeyError, EmailSubscriber.DoesNotExist):
+            to_deactivate = EmailSubscriber.objects.active().get(
+                activation_key__exact=kwargs['activation_key'])
+        except EmailSubscriber.DoesNotExist:
             raise Http404
         else:
             to_deactivate.is_activated = False
             to_deactivate.save()
-            return super(DeactivationView, self).get_redirect_url(*args, **kwargs)
+            return self.url
 
 
 class ActivationClosedView(TemplateView):
