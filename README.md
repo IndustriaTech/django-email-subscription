@@ -28,6 +28,7 @@ You should have these in installed apps:
 
 Add the urls in your main urls.py file:
 
+    url(r'^captcha/', include('captcha.urls')),
     url(r'^subscribe/', include('email_subscription.urls', namespace='subscriptions'))
 
 Run migrations or syncdb depending on whether you use South.
